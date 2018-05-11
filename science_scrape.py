@@ -6,6 +6,7 @@ from event import Event
 
 css_labels = ['field-event-institute', 'title', 'field-start-date', 'body', 'field-location', 'event-link']
 
+
 def get_events():
     url = 'http://science.huji.ac.il/en/events new'
     raw_html = connection.simple_get(url)
@@ -47,7 +48,6 @@ def parse_datetime(str_date):
         return datetime.strptime(str_date, '%A, %b %d, %Y - %H:%M')
     except:
         return None
-
 
 
 if __name__ == '__main__':
