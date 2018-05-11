@@ -2,17 +2,6 @@ from apiclient import discovery
 from httplib2 import Http
 from oauth2client import file, client, tools
 import os
-import scrape
-
-EVENTS = [{
-    'summary': 'Test',
-    'description': 'Good food wow',
-    "location": 'Danciger B',  # free form
-    'start': {'dateTime': '2018-05-06T13:00:00',
-              'timeZone': 'Asia/Jerusalem'},
-    'end': {'dateTime': '2018-05-06T16:00:00',
-            'timeZone': 'Asia/Jerusalem'},
-}]
 
 
 class Calendar:
@@ -79,19 +68,4 @@ class Calendar:
             self.print_status(event, 'deleted')
         return deleted
 
-#
-if __name__ == "__main__":
-    # add scraped events
-
-    g_cal = Calendar()
-    events = scrape.get_events()
-    num = scrape.save_events_to_db(events, 'events.db', 'new_events.db')
-    added = g_cal.add_events(scrape.db_to_json('new_events.db'))
-    del_events = g_cal.delete_events(added)
-
-    # add example event
-
-    # g_cal = Calendar()
-    #     events = g_cal.add_events(EVENTS)
-    #     del_events = g_cal.delete_events(events)
 
