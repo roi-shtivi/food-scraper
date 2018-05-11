@@ -1,38 +1,11 @@
-from requests import get
-from requests.exceptions import RequestException
-from contextlib import closing
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import sqlite3
 from util import *
+from connection import *
 import event
 
-def simple_get(url):
-    """
-    Attempts to get the content at `url` by making an HTTP GET request.
-    If the content-type of response is some kind of HTML/XML, return the
-    text content, otherwise return None
-    """
-    try:
-        with closing(get(url, stream=True)) as resp:
-            if is_good_response(resp):
-                return resp.content
-            else:
-                return None
-
-    except RequestException as e:
-        print('Error during requests to {0} : {1}'.format(url, str(e)))
-        return None
-
-
-def is_good_response(resp):
-    """
-    Returns true if the response seems to be HTML, false otherwise
-    """
-    content_type = resp.headers['Content-Type'].lower()
-    return (resp.status_code == 200 
-            and content_type is not None 
-            and content_type.find('html') > -1)
+css_labels = ['field-event-institute', 'title', 'field-start-date', 'body', 'field-location', 'event-link']
 
 def get_events():
     url = 'http://science.huji.ac.il/en/events new'
@@ -40,7 +13,7 @@ def get_events():
 
     if raw_html == None:
         print('Could not get url')
-        return None;
+        return None
 
     html = BeautifulSoup(raw_html, 'html.parser')
     events = []
@@ -53,7 +26,7 @@ def get_events():
     print('obtained {} events from {}'.format(len(events), url))
     return events
 
-css_labels = ['field-event-institute', 'title', 'field-start-date', 'body', 'field-location', 'event-link']
+
 def get_event_from_tr(tr):
     event_institute = try_to_get_css(tr, css_labels[0])
     title = try_to_get_css(tr, css_labels[1])
