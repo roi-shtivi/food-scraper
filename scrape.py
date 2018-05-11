@@ -4,6 +4,8 @@ from contextlib import closing
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import sqlite3
+from util import *
+import event
 
 def simple_get(url):
     """
@@ -32,23 +34,6 @@ def is_good_response(resp):
             and content_type is not None 
             and content_type.find('html') > -1)
 
-
-class Event:
-    def __init__(self, event_institute, title, start_date, body, location, link):
-        self.event_institute = event_institute
-        self.title = title
-        self.start_date = start_date
-        self.end_date = start_date + timedelta(minutes=30)
-        self.body = body
-        self.location = location
-        self.link = link
-
-    def __repr__(self):
-        return 'title: ' + self.title + '\nstart_date: ' + str(self.start_date) + '\nlocation: ' + self.location + '\n'
-
-    def to_tuple(self):
-        return (self.event_institute, self.title, to_google_format(self.start_date), to_google_format(self.end_date), self.body, self.location, self.link)
-
 def get_events():
     url = 'http://science.huji.ac.il/en/events new'
     raw_html = simple_get(url)
@@ -76,7 +61,7 @@ def get_event_from_tr(tr):
     body = try_to_get_css(tr, css_labels[3])
     location = try_to_get_css(tr, css_labels[4])
     link = try_to_get_css(tr, css_labels[5])
-    return Event(event_institute ,title, start_date, body, location, link)
+    return Event(event_institute, title, start_date, start_date + timedelta(minutes=30),  body, location, link)
 
 def try_to_get_css(tr, field):
     try:
@@ -90,11 +75,7 @@ def parse_datetime(str_date):
     except:
         return None
 
-def to_google_format(date_time):
-    try:
-        return date_time.strftime('%Y-%m-%dT%H:%M:%S')
-    except:
-        return ''
+
 
 def save_events_to_db(events, existing_db, new_db):
     events_conn = sqlite3.connect(existing_db)
@@ -139,5 +120,5 @@ def db_to_json(db_file):
 
 if __name__ == '__main__':
     events = get_events()
-    num = save_events_to_db(events, 'events.db', 'new_events.db')
+    # num = save_events_to_db(events, 'events.db', 'new_events.db')
 
