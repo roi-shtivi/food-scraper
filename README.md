@@ -17,6 +17,3 @@ This library helps extracting events from various websites directly to your Goog
 At `calendar.py` you can chose the `CALENDAR_ID` to inject event into.
 At `scraper.py` you can delete your newly added event using `g_cal.delete_events(added)`.
 Both of this option is enable by default.
-
-
-
