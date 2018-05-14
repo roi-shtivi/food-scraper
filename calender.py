@@ -57,8 +57,8 @@ class Calendar:
         :return:
         """
         print('''*** %r event %s:
-	        Start: %s
-	        End:   %s''' % (e['summary'].encode('utf-8'), operation,
+            Start: %s
+            End:   %s''' % (e['summary'], operation,
                             e['start']['dateTime'], e['end']['dateTime']))
 
     def delete_events(self, events):
