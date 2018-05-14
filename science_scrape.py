@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
-import connection
+import util
 import db
 from event import Event
 
@@ -9,7 +9,7 @@ css_labels = ['field-event-institute', 'title', 'field-start-date', 'body', 'fie
 
 def get_events():
     url = 'http://science.huji.ac.il/en/events new'
-    raw_html = connection.simple_get(url)
+    raw_html = util.simple_get(url)
 
     if raw_html == None:
         print('Could not get url')
