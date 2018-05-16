@@ -12,6 +12,7 @@ EXAMPLE_EVENTS = [{
             'timeZone': 'Asia/Jerusalem'},
 }]
 
+
 def simple_get(url):
     """
     Attempts to get the content at `url` by making an HTTP GET request.
@@ -38,8 +39,13 @@ def is_good_response(resp):
     return (resp.status_code == 200
             and content_type is not None
             and content_type.find('html') > -1)
+
+
 def to_google_format(date_time):
+    """
+    Formats a given datetime to the format required by google calendar.
+    """
     try:
         return date_time.strftime('%Y-%m-%dT%H:%M:%S')
-    except:
+    except BaseException:
         return ''
