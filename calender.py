@@ -5,11 +5,22 @@ import os
 
 
 class Calendar:
-    SCOPES = 'https://www.googleapis.com/auth/calendar'  # read&write permissions
-    # CALENDER_ID = 'mail.huji.ac.il_ohkpphph8fngk46dtjj0hk9ams@group.calendar.google.com' #FFF
-    CALENDER_ID = '45qti41i2evvupo6tubj5upm78@group.calendar.google.com'  # ROI
+    """
+    Allows communication with google calendar
+    """
+    # read&write permissions
+    SCOPES = 'https://www.googleapis.com/auth/calendar'
+    #FFF Calendar
+    # CALENDER_ID =
+    # 'mail.huji.ac.il_ohkpphph8fngk46dtjj0hk9ams@group.calendar.google.com'
+
+    # Roi's test calendar
+    CALENDER_ID = '45qti41i2evvupo6tubj5upm78@group.calendar.google.com'
 
     def __init__(self):
+        """
+        Setups a google calendar
+        """
         self.g_cal = self.setup()
 
     def setup(self):
@@ -23,11 +34,16 @@ class Calendar:
             store = file.Storage('storage.json')
             creds = store.get()
             if not creds or creds.invalid:
-                flow = client.flow_from_clientsecrets('client_secret.json', self.SCOPES)
+                flow = client.flow_from_clientsecrets(
+                    'client_secret.json', self.SCOPES)
                 creds = tools.run_flow(flow, store)  # ask to auth
-            g_cal = discovery.build('calendar', 'v3', http=creds.authorize(Http()))
+            g_cal = discovery.build(
+                'calendar',
+                'v3',
+                http=creds.authorize(
+                    Http()))
             return g_cal
-        except Exception  as err:
+        except Exception as err:
             print('google calendar object was not initialize successfully')
             return None
 
@@ -41,8 +57,10 @@ class Calendar:
         try:
             added = []
             for event in events:
-                e = self.g_cal.events().insert(calendarId=self.CALENDER_ID,
-                                               sendNotifications=False, body=event).execute()
+                e = self.g_cal.events().insert(
+                    calendarId=self.CALENDER_ID,
+                    sendNotifications=False,
+                    body=event).execute()
                 added.append(e)
                 self.print_status(e, 'added')
             return added
@@ -62,10 +80,16 @@ class Calendar:
                             e['start']['dateTime'], e['end']['dateTime']))
 
     def delete_events(self, events):
+        """
+        Deletes a list of events
+        :param e: Events object
+        :return: a list of deleted events
+        """
         deleted = []
         for event in events:
-            deleted.append(self.g_cal.events().delete(calendarId=self.CALENDER_ID, eventId=event['id']).execute())
+            deleted.append(
+                self.g_cal.events().delete(
+                    calendarId=self.CALENDER_ID,
+                    eventId=event['id']).execute())
             self.print_status(event, 'deleted')
         return deleted
-
-
