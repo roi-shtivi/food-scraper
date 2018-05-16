@@ -4,8 +4,15 @@ from datetime import datetime
 import util
 from event import Event
 
-css_tags = ['.event-year', '.event-start-month', '.event-start-day', '.date-display-start', '.date-display-end',
-             '.node-title', '.field-item', '.node-content']
+css_tags = [
+    '.event-year',
+    '.event-start-month',
+    '.event-start-day',
+    '.date-display-start',
+    '.date-display-end',
+    '.node-title',
+    '.field-item',
+    '.node-content']
 
 
 def get_events(url):
@@ -14,11 +21,9 @@ def get_events(url):
     :return: Return a list of Event
     """
     raw_html = util.simple_get(url)
-
-    if raw_html == None:
+    if raw_html is None:
         print('Could not get url')
         return None
-
     i = 2
     html = BeautifulSoup(raw_html, 'html.parser')
     events = []
@@ -40,26 +45,40 @@ def get_event_from_container(container):
     :return: Event objects corresponding to the container data.
     """
     title = try_to_get_css(container, css_tags[5])
-    if not title or 'TBA' in title:  # if the event is not complete in the site or to be announce.
+    # if the event is not complete in the site or to be announce.
+    if not title or 'TBA' in title:
         return None
-
-    location = container.select('.field-items')[1].text.strip()
+    try:
+        location = container.select('.field-items')[1].text.strip()
+    # no location has found
+    except IndexError:
+        return None
     link = container.find('a')['href']
     sub_container = BeautifulSoup(util.simple_get(link), 'html.parser')
-    body = try_to_get_css(sub_container, css_tags[7])  # body is obtained from another link ('link')
+    # body is obtained from another link ('link')
+    body = try_to_get_css(sub_container, css_tags[7])
 
     # get time elements
     t = get_time_elements(container)
 
     # construct time strings
-    str_s_date = t['year'] + ' ' + t['month'] + ' ' + t['day'] + ' ' + t['s_hour']
-    str_e_date = t['year'] + ' ' + t['month'] + ' ' + t['day'] + ' ' + t['e_hour']
+    str_s_date = t['year'] + ' ' + t['month'] + ' ' + t['day'] + ' ' + t[
+        's_hour']
+    str_e_date = t['year'] + ' ' + t['month'] + ' ' + t['day'] + ' ' + t[
+        'e_hour']
 
     # parse the string time
     s_date = parse_datetime(str_s_date)
     e_date = parse_datetime(str_e_date)
 
-    return Event('Einstein Institute of Mathematics', title, s_date, e_date, body, location, link)
+    return Event(
+        'Einstein Institute of Mathematics',
+        title,
+        s_date,
+        e_date,
+        body,
+        location,
+        link)
 
 
 def get_time_elements(container):
@@ -73,7 +92,12 @@ def get_time_elements(container):
     day = try_to_get_css(container, css_tags[2])
     s_hour = try_to_get_css(container, css_tags[3])
     e_hour = try_to_get_css(container, css_tags[4])
-    return {'year': year, 'month': month, 'day': day, 's_hour': s_hour, 'e_hour': e_hour}
+    return {
+        'year': year,
+        'month': month,
+        'day': day,
+        's_hour': s_hour,
+        'e_hour': e_hour}
 
 
 def parse_datetime(str_date):
@@ -92,7 +116,8 @@ def try_to_get_css(container, field):
     """
     Try to extract text data from the filed in the the container
     :param container: beautiful soup Tag object
-    :param field: text id that represent the specific Tag that the text can be found in
+    :param field: text id that represent the specific Tag that the text can be
+        found in
     :return: string of the field Tag
     """
     try:
@@ -101,9 +126,10 @@ def try_to_get_css(container, field):
         return ''
 
 
-if __name__ == '__main__':  # print the list of Events that was scraped from the url.
+if __name__ == '__main__':
+    # print the list of Events that was scraped from the url.
     now = datetime.now()
     two_digit_month = '{:02d}'.format(now.month)
-    url = 'http://mathematics.huji.ac.il/calendar/upcoming/eventss/events-seminars?type=month&month=' + str(
-        now.year) + '-' + two_digit_month
+    url = 'http://mathematics.huji.ac.il/calendar/upcoming/eventss/events' \
+          '-seminars?type=month&month=' + str(now.year) + '-' + two_digit_month
     print(get_events(url))
