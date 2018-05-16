@@ -8,6 +8,7 @@ class Calendar:
     """
     Allows communication with google calendar
     """
+
     # read&write permissions
     SCOPES = 'https://www.googleapis.com/auth/calendar'
     #FFF Calendar

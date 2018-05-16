@@ -27,8 +27,8 @@ class Event:
         """
         Represntation of an event contains title, start date and location.
         """
-        return 'title: ' + self.title +
-            '\nstart_date: ' + str(self.start_date) +
+        return 'title: ' + self.title + \
+            '\nstart_date: ' + str(self.start_date) + \
             '\nlocation: ' + self.location + '\n'
 
     def to_tuple(self):
