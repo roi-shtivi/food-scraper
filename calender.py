@@ -6,11 +6,13 @@ import os
 
 class Calendar:
     SCOPES = 'https://www.googleapis.com/auth/calendar'  # read&write permissions
-    # CALENDER_ID = 'mail.huji.ac.il_ohkpphph8fngk46dtjj0hk9ams@group.calendar.google.com' #FFF
-    CALENDER_ID = '45qti41i2evvupo6tubj5upm78@group.calendar.google.com'  # ROI
 
-    def __init__(self):
+    def __init__(self, cal_mark):
         self.g_cal = self.setup()
+        if cal_mark == 'FFF':
+            self.cal_id = os.environ['FFF_CAL_ID']
+        elif cal_mark == 'TEST':
+            self.cal_id = os.environ['TEST_CAL_ID']
 
     def setup(self):
         """
@@ -41,7 +43,7 @@ class Calendar:
         try:
             added = []
             for event in events:
-                e = self.g_cal.events().insert(calendarId=self.CALENDER_ID,
+                e = self.g_cal.events().insert(calendarId=self.cal_id,
                                                sendNotifications=False, body=event).execute()
                 added.append(e)
                 self.print_status(e, 'added')
@@ -64,7 +66,7 @@ class Calendar:
     def delete_events(self, events):
         deleted = []
         for event in events:
-            deleted.append(self.g_cal.events().delete(calendarId=self.CALENDER_ID, eventId=event['id']).execute())
+            deleted.append(self.g_cal.events().delete(calendarId=self.cal_id, eventId=event['id']).execute())
             self.print_status(event, 'deleted')
         return deleted
 
