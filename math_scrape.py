@@ -15,11 +15,14 @@ css_tags = [
     '.node-content']
 
 
-def get_events(url):
+def get_events():
     """
-    :param url: the url address to scrape events from
     :return: Return a list of Event
     """
+    now = datetime.now()
+    two_digit_month = '{:02d}'.format(now.month)
+    url = 'http://mathematics.huji.ac.il/calendar/upcoming/eventss/events' \
+          '-seminars?type=month&month=' + str(now.year) + '-' + two_digit_month
     raw_html = util.simple_get(url)
     if raw_html is None:
         print('Could not get url')
@@ -127,9 +130,4 @@ def try_to_get_css(container, field):
 
 
 if __name__ == '__main__':
-    # print the list of Events that was scraped from the url.
-    now = datetime.now()
-    two_digit_month = '{:02d}'.format(now.month)
-    url = 'http://mathematics.huji.ac.il/calendar/upcoming/eventss/events' \
-          '-seminars?type=month&month=' + str(now.year) + '-' + two_digit_month
-    print(get_events(url))
+    print(get_events())
