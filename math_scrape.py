@@ -3,6 +3,7 @@ import datetime
 from datetime import datetime
 import util
 from event import Event
+import re
 
 css_tags = [
     '.event-year',
@@ -60,6 +61,8 @@ def get_event_from_container(container):
 
     # get time elements
     t = get_time_elements(container)
+    if t is None:
+        return None
 
     # construct time strings
     str_s_date = t['year'] + ' ' + t['month'] + ' ' + t['day'] + ' ' + t[
@@ -90,6 +93,9 @@ def get_time_elements(container):
     year = try_to_get_css(container, css_tags[0])
     month = try_to_get_css(container, css_tags[1])
     day = try_to_get_css(container, css_tags[2])
+    # check for all-day event (currently no such supporting yet.)
+    if re.search('All day', container.text, re.IGNORECASE):
+        return None
     s_hour = try_to_get_css(container, css_tags[3])
     e_hour = try_to_get_css(container, css_tags[4])
     return {
