@@ -45,43 +45,46 @@ def get_event_from_container(container):
     :param container: beautiful soup Tag object
     :return: Event objects corresponding to the container data.
     """
-    title = try_to_get_css(container, css_tags[5])
-    # if the event is not complete in the site or to be announce.
-    if not title or 'TBA' in title:
-        return None
     try:
-        location = container.select('.field-items')[1].text.strip()
-    # no location has found
-    except IndexError:
+        title = try_to_get_css(container, css_tags[5])
+        # if the event is not complete in the site or to be announce.
+        if not title or 'TBA' in title:
+            return None
+        try:
+            location = container.select('.field-items')[1].text.strip()
+        # no location has found
+        except IndexError:
+            return None
+        link = container.find('a')['href']
+        sub_container = BeautifulSoup(util.simple_get(link), 'html.parser')
+        # body is obtained from another link ('link')
+        body = try_to_get_css(sub_container, css_tags[7])
+
+        # get time elements
+        t = get_time_elements(container)
+        if t is None:
+            return None
+
+        # construct time strings
+        str_s_date = t['year'] + ' ' + t['month'] + ' ' + t['day'] + ' ' + t[
+            's_hour']
+        str_e_date = t['year'] + ' ' + t['month'] + ' ' + t['day'] + ' ' + t[
+            'e_hour']
+
+        # parse the string time
+        s_date = parse_datetime(str_s_date)
+        e_date = parse_datetime(str_e_date)
+
+        return Event(
+            'Einstein Institute of Mathematics',
+            title,
+            s_date,
+            e_date,
+            body,
+            location,
+            link)
+    except Exception:
         return None
-    link = container.find('a')['href']
-    sub_container = BeautifulSoup(util.simple_get(link), 'html.parser')
-    # body is obtained from another link ('link')
-    body = try_to_get_css(sub_container, css_tags[7])
-
-    # get time elements
-    t = get_time_elements(container)
-    if t is None:
-        return None
-
-    # construct time strings
-    str_s_date = t['year'] + ' ' + t['month'] + ' ' + t['day'] + ' ' + t[
-        's_hour']
-    str_e_date = t['year'] + ' ' + t['month'] + ' ' + t['day'] + ' ' + t[
-        'e_hour']
-
-    # parse the string time
-    s_date = parse_datetime(str_s_date)
-    e_date = parse_datetime(str_e_date)
-
-    return Event(
-        'Einstein Institute of Mathematics',
-        title,
-        s_date,
-        e_date,
-        body,
-        location,
-        link)
 
 
 def get_time_elements(container):
