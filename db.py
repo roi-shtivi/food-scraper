@@ -19,7 +19,9 @@ def save_events_to_db(events, existing_db, new_db):
         end_date text,
         body text,
         location text,
-        link text)
+        link text,
+        scraper text,
+        add_time text)
         '''
     )
     events_cur.execute(
@@ -30,7 +32,9 @@ def save_events_to_db(events, existing_db, new_db):
         end_date text,
         body text,
         location text,
-        link text)
+        link text,
+        scraper text,
+        add_time text)
         '''
     )
 
@@ -48,11 +52,11 @@ def save_events_to_db(events, existing_db, new_db):
         if not_exists:
             events_cur.execute(
                 '''INSERT INTO events
-                VALUES (?, ?, ?, ?, ?, ?, ?)''',
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                 event.to_tuple())
             new_cur.execute(
                 '''INSERT INTO events
-                VALUES (?, ?, ?, ?, ?, ?, ?)''',
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                 event.to_tuple())
             new_events += 1
 

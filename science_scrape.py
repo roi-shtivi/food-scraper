@@ -49,7 +49,7 @@ def get_event_from_tr(tr):
     location = try_to_get_css(tr, css_labels[4])
     link = try_to_get_css(tr, css_labels[5])
     return Event(event_institute, title, start_date,
-                 None,  body, location, link)
+                 None,  body, location, link, 'SCIENCE')
 
 
 def try_to_get_css(tr, field):

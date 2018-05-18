@@ -1,5 +1,5 @@
 from util import to_google_format
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 
 class Event:
@@ -8,7 +8,7 @@ class Event:
     """
 
     def __init__(self, event_institute, title, start_date,
-                 end_date, body, location, link):
+                 end_date, body, location, link, scraper):
         """
         Initializes an event.
         If end_date is missing, it will use start_date + 30 minutes instead.
@@ -22,6 +22,8 @@ class Event:
         self.body = body
         self.location = location
         self.link = link
+        self.scraper = scraper
+        self.add_time = datetime.now()
 
     def __repr__(self):
         """
@@ -41,4 +43,6 @@ class Event:
                 to_google_format(self.end_date),
                 self.body,
                 self.location,
-                self.link)
+                self.link,
+                self.scraper,
+                to_google_format(self.add_time))
