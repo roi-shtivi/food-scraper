@@ -20,8 +20,8 @@ def save_events_to_db(events, existing_db, new_db):
         body text,
         location text,
         link text,
-        scraper text,
-        add_time text)
+        scraped_by text,
+        timestamp text)
         '''
     )
     events_cur.execute(
@@ -33,8 +33,8 @@ def save_events_to_db(events, existing_db, new_db):
         body text,
         location text,
         link text,
-        scraper text,
-        add_time text)
+        scraped_by text,
+        timestamp text)
         '''
     )
 

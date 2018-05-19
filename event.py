@@ -22,8 +22,8 @@ class Event:
         self.body = body
         self.location = location
         self.link = link
-        self.scraper = scraper
-        self.add_time = datetime.now()
+        self.scraped_by = scraper
+        self.timestamp = datetime.now()
 
     def __repr__(self):
         """
@@ -44,5 +44,5 @@ class Event:
                 self.body,
                 self.location,
                 self.link,
-                self.scraper,
-                to_google_format(self.add_time))
+                self.scraped_by,
+                to_google_format(self.timestamp))
