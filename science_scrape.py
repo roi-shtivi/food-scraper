@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from datetime import datetime, timedelta
+from datetime import datetime
 import util
 import db
 from event import Event
@@ -32,7 +32,9 @@ def get_events():
         table = '.view-display-id-block_{}'.format(i)
         trs = html.select(table)[0].find_all('tr')
         for tr in trs[1:]:
-            events.append(get_event_from_tr(tr))
+            event = get_event_from_tr(tr)
+            if event:
+                events.append(event)
 
     print('obtained {} events from {}'.format(len(events), url))
     return events
@@ -44,7 +46,10 @@ def get_event_from_tr(tr):
     """
     event_institute = try_to_get_css(tr, css_labels[0])
     title = try_to_get_css(tr, css_labels[1])
-    start_date = parse_datetime(try_to_get_css(tr, css_labels[2]))
+    try:
+        start_date = parse_datetime(try_to_get_css(tr, css_labels[2]))
+    except ValueError:
+        print("Error getting {}'s date".format(title))
     body = try_to_get_css(tr, css_labels[3])
     location = try_to_get_css(tr, css_labels[4])
     link = try_to_get_css(tr, css_labels[5])
@@ -68,10 +73,7 @@ def parse_datetime(str_date):
     Parses a date string, typically found in this website.
     Returns a datetime.
     """
-    try:
-        return datetime.strptime(str_date, '%A, %b %d, %Y - %H:%M')
-    except BaseException:
-        return None
+    return datetime.strptime(str_date, '%A, %B %d, %Y - %H:%M')
 
 
 if __name__ == '__main__':
