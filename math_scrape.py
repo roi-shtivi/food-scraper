@@ -3,6 +3,7 @@ import datetime
 from datetime import datetime
 import util
 from event import Event
+import re
 
 css_tags = [
     '.event-year',
@@ -19,10 +20,8 @@ def get_events():
     """
     :return: Return a list of Event
     """
-    now = datetime.now()
-    two_digit_month = '{:02d}'.format(now.month)
-    url = 'http://mathematics.huji.ac.il/calendar/upcoming/eventss/events' \
-          '-seminars?type=month&month=' + str(now.year) + '-' + two_digit_month
+    url = 'https://mathematics.huji.ac.il/' \
+          'calendar/upcoming/eventss/events-seminars'
     raw_html = util.simple_get(url)
     if raw_html is None:
         print('Could not get url')
@@ -47,28 +46,30 @@ def get_event_from_container(container):
     :param container: beautiful soup Tag object
     :return: Event objects corresponding to the container data.
     """
-    title = try_to_get_css(container, css_tags[5])
-    # if the event is not complete in the site or to be announce.
-    if not title or 'TBA' in title:
-        return None
-    try:
-        location = container.select('.field-items')[1].text.strip()
-    # no location has found
-    except IndexError:
-        return None
-    link = container.find('a')['href']
-    sub_container = BeautifulSoup(util.simple_get(link), 'html.parser')
-    # body is obtained from another link ('link')
-    body = try_to_get_css(sub_container, css_tags[7])
 
+    title = try_to_get_css(container, css_tags[5])
     # get time elements
     t = get_time_elements(container)
-
+    # if the event is not complete by any of those factors
+    if not title or 'TBA' in title or t is None:
+        return None
+    try:
+        location = container.find('section', {'class': 'field-name-field-event-location'}).text
+    # no location has found
+    except AttributeError:
+        return None
+    try:
+        link = container.find('a')['href']
+        sub_container = BeautifulSoup(util.simple_get(link), 'html.parser')
+        # body is obtained from another link ('link')
+        body = try_to_get_css(sub_container, css_tags[7])
+    # if not link was found no body will be found either
+    except IndexError:
+        link, body = '', ''
     # construct time strings
-    str_s_date = t['year'] + ' ' + t['month'] + ' ' + t['day'] + ' ' + t[
-        's_hour']
-    str_e_date = t['year'] + ' ' + t['month'] + ' ' + t['day'] + ' ' + t[
-        'e_hour']
+    str_date = '{} {} {}'.format(t['year'], t['month'], t['day'])
+    str_s_date = '{} {}'.format(str_date, t['s_hour'])
+    str_e_date = '{} {}'.format(str_date, t['s_hour'])
 
     # parse the string time
     s_date = parse_datetime(str_s_date)
@@ -93,6 +94,9 @@ def get_time_elements(container):
     year = try_to_get_css(container, css_tags[0])
     month = try_to_get_css(container, css_tags[1])
     day = try_to_get_css(container, css_tags[2])
+    # check for all-day event (currently no such supporting yet.)
+    if re.search('All day', container.text, re.IGNORECASE):
+        return None
     s_hour = try_to_get_css(container, css_tags[3])
     e_hour = try_to_get_css(container, css_tags[4])
     return {
