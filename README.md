@@ -5,15 +5,13 @@ Install the following libraries:
 ```
 pip install --upgrade requests bs4 google-api-python-client
 ```
+Environment variables `'FFF_CAL_ID'` and `'TEST_CAL_ID'` should be set with the corresponding calendar's ids.
 
 #### Running the script
 ```
-python3 scraper.py CAL_MARKER DEBUG SCRAPER_1 SCRAPE_2
+usage: scraper.py calendar [-h] [--debug] [--all] [--scrapers SCRAPERS [SCRAPERS ...]]
 ```
-* `CAL_MARKER` represent the calendar events will be added into.
-Can be `FFF` or `TEST`.
-* `DEBUG` represent a mode where the events will be immediately deleted after
-they were added, also the events will be added to a new .db files.
-Can be `0` or `1`.
-* `SCRAPE_i` represent the name of the scrape that will be used.
-Currently can be `SCIENCE` or `MATH`.
+For example:
+`FFF --all` will insert events to `FFF` calendar from all scrapers avialble
+`TEST --scrapers SCIENCE MATH` will insert events to `TEST` calendar from `SCIENCE` and `MATH`
+`FFF -d --all` will insert events to `TEST` calendar from all scrapers avialble and will delete them immidiatly
