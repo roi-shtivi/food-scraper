@@ -16,11 +16,13 @@ css_tags = [
     '.node-content']
 
 
-def get_events(url):
+def get_events():
     """
-    :param url: the url address to scrape events from
+    :param : the url address to scrape events from
     :return: Return a list of Event
     """
+    url = 'https://mathematics.huji.ac.il/' \
+          'calendar/upcoming/eventss/events-seminars'
     raw_html = util.simple_get(url)
     if raw_html is None:
         print('Could not get url')
@@ -45,46 +47,43 @@ def get_event_from_container(container):
     :param container: beautiful soup Tag object
     :return: Event objects corresponding to the container data.
     """
+
+    title = try_to_get_css(container, css_tags[5])
+    # get time elements
+    t = get_time_elements(container)
+    # if the event is not complete by any of those factors
+    if not title or 'TBA' in title or t is None:
+        return None
     try:
-        title = try_to_get_css(container, css_tags[5])
-        # if the event is not complete in the site or to be announce.
-        if not title or 'TBA' in title:
-            return None
-        try:
-            location = container.select('.field-items')[1].text.strip()
-        # no location has found
-        except IndexError:
-            return None
+        location = container.find('section', {'class': 'field-name-field-event-location'}).text
+    # no location has found
+    except AttributeError:
+        return None
+    try:
         link = container.find('a')['href']
         sub_container = BeautifulSoup(util.simple_get(link), 'html.parser')
         # body is obtained from another link ('link')
         body = try_to_get_css(sub_container, css_tags[7])
+    # if not link was found no body will be found either
+    except IndexError:
+        link, body = '', ''
+    # construct time strings
+    str_date = '{} {} {}'.format(t['year'], t['month'], t['day'])
+    str_s_date = '{} {}'.format(str_date, t['s_hour'])
+    str_e_date = '{} {}'.format(str_date, t['s_hour'])
 
-        # get time elements
-        t = get_time_elements(container)
-        if t is None:
-            return None
+    # parse the string time
+    s_date = parse_datetime(str_s_date)
+    e_date = parse_datetime(str_e_date)
 
-        # construct time strings
-        str_s_date = t['year'] + ' ' + t['month'] + ' ' + t['day'] + ' ' + t[
-            's_hour']
-        str_e_date = t['year'] + ' ' + t['month'] + ' ' + t['day'] + ' ' + t[
-            'e_hour']
-
-        # parse the string time
-        s_date = parse_datetime(str_s_date)
-        e_date = parse_datetime(str_e_date)
-
-        return Event(
-            'Einstein Institute of Mathematics',
-            title,
-            s_date,
-            e_date,
-            body,
-            location,
-            link)
-    except Exception:
-        return None
+    return Event(
+        'Einstein Institute of Mathematics',
+        title,
+        s_date,
+        e_date,
+        body,
+        location,
+        link)
 
 
 def get_time_elements(container):
@@ -136,9 +135,4 @@ def try_to_get_css(container, field):
 
 
 if __name__ == '__main__':
-    # print the list of Events that was scraped from the url.
-    now = datetime.now()
-    two_digit_month = '{:02d}'.format(now.month)
-    url = 'http://mathematics.huji.ac.il/calendar/upcoming/eventss/events' \
-          '-seminars?type=month&month=' + str(now.year) + '-' + two_digit_month
-    print(get_events(url))
+        print(get_events())
