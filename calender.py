@@ -3,35 +3,13 @@ from httplib2 import Http
 from oauth2client import file, client, tools
 import os
 
+SCOPES = 'https://www.googleapis.com/auth/calendar'  # read&write permissions
+
 
 class Calendar:
-    SCOPES = 'https://www.googleapis.com/auth/calendar'  # read&write permissions
-
-    def __init__(self, cal_mark):
-        self.g_cal = self.setup()
-        if cal_mark == 'FFF':
-            self.cal_id = os.environ['FFF_CAL_ID']
-        elif cal_mark == 'TEST':
-            self.cal_id = os.environ['TEST_CAL_ID']
-
-    def setup(self):
-        """
-        create calender
-        :return: google calender object
-        """
-        try:
-            if not os.path.exists('storage.json'):
-                open('storage.json', "w+")
-            store = file.Storage('storage.json')
-            creds = store.get()
-            if not creds or creds.invalid:
-                flow = client.flow_from_clientsecrets('client_secret.json', self.SCOPES)
-                creds = tools.run_flow(flow, store)  # ask to auth
-            g_cal = discovery.build('calendar', 'v3', http=creds.authorize(Http()))
-            return g_cal
-        except Exception  as err:
-            print('google calendar object was not initialize successfully')
-            return None
+    def __init__(self, cal_id):
+        self.g_cal = setup()
+        self.cal_id = cal_id
 
     def add_events(self, events):
         """
@@ -71,3 +49,21 @@ class Calendar:
         return deleted
 
 
+def setup():
+    """
+    create calender
+    :return: google calender object
+    """
+    try:
+        if not os.path.exists('storage.json'):
+            open('storage.json', "w+")
+        store = file.Storage('storage.json')
+        creds = store.get()
+        if not creds or creds.invalid:
+            flow = client.flow_from_clientsecrets('client_secret.json', SCOPES)
+            creds = tools.run_flow(flow, store)  # ask to auth
+        g_cal = discovery.build('calendar', 'v3', http=creds.authorize(Http()))
+        return g_cal
+    except Exception  as err:
+        print('google calendar object was not initialize successfully')
+        return None
