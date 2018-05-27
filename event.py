@@ -4,7 +4,7 @@ from datetime import timedelta
 
 class Event:
     """
-    Represnts a calendar event
+    Represents a calendar event
     """
 
     def __init__(self, event_institute, title, start_date,
@@ -25,7 +25,7 @@ class Event:
 
     def __repr__(self):
         """
-        Represntation of an event contains title, start date and location.
+        Representation of an event contains title, start date and location.
         """
         return 'title: ' + self.title + \
             '\nstart_date: ' + str(self.start_date) + \
@@ -42,3 +42,9 @@ class Event:
                 self.body,
                 self.location,
                 self.link)
+
+    def __lt__(self, other):
+        """
+        Standard order by start date
+        """
+        return self.start_date < other.start_date
