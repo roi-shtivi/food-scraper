@@ -1,17 +1,25 @@
 This library helps extracting events from various websites directly to your Google Calendar.
 
-### Dependencies
+## Dependencies
+### Python Libraries
 Install the following libraries:
 ```
-pip install --upgrade requests bs4 google-api-python-client
+pip3 install --upgrade requests bs4 google-api-python-client
 ```
-Environment variables `'FFF_CAL_ID'` and `'TEST_CAL_ID'` should be set with the corresponding calendar's ids.
+### Environment variables
+- `'FFF_CAL_ID'` Calendar id to add (real) events to.
+- `'TEST_CAL_ID'` Calendar id to add test events to.
 
-#### Running the script
+Calendar id can be found on google calendar's settings.
+
+## Running the script
+Tested on `python3.6`.
 ```
-usage: scraper.py calendar [-h] [--debug] [--all] [--scrapers SCRAPERS [SCRAPERS ...]]
+python3 scraper.py <calendar> [-h] [--debug] [--all] [--scrapers SCRAPERS [SCRAPERS ...]]
 ```
-For example:
-`FFF --all` will insert events to `FFF` calendar from all scrapers avialble
-`TEST --scrapers SCIENCE MATH` will insert events to `TEST` calendar from `SCIENCE` and `MATH`
-`FFF -d --all` will insert events to `TEST` calendar from all scrapers avialble and will delete them immidiatly
+
+- `calendar` parameter can take `FFF` or `TEST`.
+### Examples
+`python3 scraper.py FFF --all` will insert events to `FFF` calendar from all scrapers avialble
+`python3 scraper.py TEST --scrapers SCIENCE MATH` will insert events to `TEST` calendar from `SCIENCE` and `MATH`
+`python3 scraper.py FFF --d --all` will insert events to `TEST` calendar from all scrapers avialble and will delete them immediately.
