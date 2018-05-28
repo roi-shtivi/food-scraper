@@ -64,7 +64,7 @@ def get_event_from_container(container):
         # body is obtained from another link ('link')
         body = try_to_get_css(sub_container, css_tags[7])
     # if not link was found no body will be found either
-    except IndexError:
+    except KeyError:
         link, body = '', ''
     # construct time strings
     str_date = '{} {} {}'.format(t['year'], t['month'], t['day'])
@@ -72,8 +72,12 @@ def get_event_from_container(container):
     str_e_date = '{} {}'.format(str_date, t['s_hour'])
 
     # parse the string time
-    s_date = parse_datetime(str_s_date)
-    e_date = parse_datetime(str_e_date)
+    try:
+        s_date = parse_datetime(str_s_date)
+        e_date = parse_datetime(str_e_date)
+    except ValueError:
+        print("Error getting {}'s date".format(title))
+        return None
 
     return Event(
         'Einstein Institute of Mathematics',
@@ -113,10 +117,7 @@ def parse_datetime(str_date):
     :param str_date: url's time format
     :return: datetime object
     """
-    try:
-        return datetime.strptime(str_date, '%Y %B %d %I:%M%p')
-    except:
-        return None
+    return datetime.strptime(str_date, '%Y %B %d %I:%M%p')
 
 
 def try_to_get_css(container, field):
