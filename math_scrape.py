@@ -18,7 +18,6 @@ css_tags = [
 
 def get_events():
     """
-    :param : the url address to scrape events from
     :return: Return a list of Event
     """
     url = 'https://mathematics.huji.ac.il/' \
@@ -135,4 +134,4 @@ def try_to_get_css(container, field):
 
 
 if __name__ == '__main__':
-        print(get_events())
+    print(get_events())
