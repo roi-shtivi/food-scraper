@@ -21,8 +21,11 @@ class Calendar:
         try:
             added = []
             for event in events:
-                e = self.g_cal.events().insert(calendarId=self.cal_id,
-                                               sendNotifications=False, body=event).execute()
+                e = self.g_cal.events().insert(
+                            calendarId=self.cal_id,
+                            sendNotifications=False,
+                            body=event
+                        ).execute()
                 added.append(e)
                 self.print_status(e, 'added')
             return added
@@ -42,9 +45,17 @@ class Calendar:
                             e['start']['dateTime'], e['end']['dateTime']))
 
     def delete_events(self, events):
+        """
+        Deletes a list of events
+        :param e: Events object
+        :return: a list of deleted events
+        """
         deleted = []
         for event in events:
-            deleted.append(self.g_cal.events().delete(calendarId=self.cal_id, eventId=event['id']).execute())
+            deleted.append(self.g_cal.events().delete(
+                calendarId=self.cal_id,
+                eventId=event['id']
+                ).execute())
             self.print_status(event, 'deleted')
         return deleted
 
