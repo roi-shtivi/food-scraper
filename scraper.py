@@ -3,8 +3,9 @@ import science_scrape
 import db
 import os
 import argparse
+import math_scrape
 
-SCRAPERS = [science_scrape]
+SCRAPERS = [math_scrape, science_scrape]
 SCRAPERS_NAMES = [x.__name__ for x in SCRAPERS]
 
 def parse_arguments():
@@ -23,19 +24,16 @@ def parse_arguments():
 
 
 def get_cal_id(calendar_arg):
-    try:
-        if calendar_arg == 'FFF':
-            return os.environ['FFF_CAL_ID']
-        elif calendar_arg == 'TEST':
-            return os.environ['TEST_CAL_ID']
-    except KeyError:
-        raise KeyError
+    if calendar_arg == 'FFF':
+        return os.environ['FFF_CAL_ID']
+    elif calendar_arg == 'TEST':
+        return os.environ['TEST_CAL_ID']
     # Invalid calendar symbol
     else:
         raise ValueError("Invalid calendar id name")
 
 
-def run(args, events, debug):
+def run(args, events, debug=False):
     cal_id = ''
     event_file = 'events.db'
     new_event_file = 'new_events.db'
@@ -47,9 +45,9 @@ def run(args, events, debug):
         cal_id = get_cal_id(args.calendar)
     except ValueError:
         parser.error('Invalid calendar id name')
-    except KeyError:
-        parser.error('Match of environment variable \'{}\' was not found'
-                     .format(args.calendar))
+    except KeyError as e:
+        parser.error('A match of the environment variable {0} was not found. You should define {0} at your local machine'
+                     .format(e))
     g_cal = Calendar(cal_id)
     num = db.save_events_to_db(events, event_file, new_event_file)
     added = g_cal.add_events(db.db_to_json(new_event_file))
@@ -57,6 +55,7 @@ def run(args, events, debug):
         g_cal.delete_events(added)
     os.remove(new_event_file)
     return added, num
+
 
 if __name__ == "__main__":
     parser, args = parse_arguments()
@@ -73,6 +72,6 @@ if __name__ == "__main__":
         if scraper.__name__ in args.scrapers:
             events += scraper.get_events()
     if not args.debug:
-        added, num = run(args, events, False)
+        added, num = run(args, events)
     else:
-        added, num = run(args, events, True)
+        added, num = run(args, events, debug=True)
