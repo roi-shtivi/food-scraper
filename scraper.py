@@ -1,7 +1,6 @@
 from calender import Calendar
 import science_scrape
-import db
-import os
+from db import Db
 
 if __name__ == "__main__":
     """
@@ -10,11 +9,12 @@ if __name__ == "__main__":
     # add scraped events
 
     g_cal = Calendar()
+    db = Db('events.db')
     events = science_scrape.get_events()
-    num = db.save_events_to_db(events, 'events.db', 'new_events.db')
-    added = g_cal.add_events(db.db_to_json('new_events.db'))
-    os.remove('new_events.db')
-    # del_events = g_cal.delete_events(added)  # debug-mode
+    new_events = db.remove_existing_events_from_list(events)
+    added = g_cal.add_events([e.to_json() for e in new_events])
+    db.save_events_to_db(new_events)
+    del_events = g_cal.delete_events(added)  # debug-mode
 
     # TODO: use a parameter for this
     # add example event

@@ -42,3 +42,27 @@ class Event:
                 self.body,
                 self.location,
                 self.link)
+
+    def description(self):
+        """
+        Returns a string description of the event.
+        """
+        inst = ''
+        if self.event_institute:
+            inst = 'institute: {}\n'.format(self.event_institute)
+        return inst + '{}\n{}'.format(self.body, self.link)
+
+    def to_json(self):
+        """
+        Returns a JSON format of the event. Fits specifically to
+        google calendar's format.
+        """
+        return {
+            'summary': self.title,
+            'description': self.description(),
+            "location": self.location,  # free form
+            'start': {'dateTime': to_google_format(self.start_date),
+                      'timeZone': 'Asia/Jerusalem'},
+            'end': {'dateTime': to_google_format(self.end_date),
+                    'timeZone': 'Asia/Jerusalem'},
+        }
