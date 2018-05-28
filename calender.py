@@ -75,6 +75,6 @@ def setup():
             creds = tools.run_flow(flow, store)  # ask to auth
         g_cal = discovery.build('calendar', 'v3', http=creds.authorize(Http()))
         return g_cal
-    except Exception  as err:
+    except Exception as err:
         print('google calendar object was not initialize successfully')
-        return None
+        raise err
