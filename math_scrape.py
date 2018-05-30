@@ -18,14 +18,14 @@ css_tags = [
 
 def get_events():
     """
-    :return: Return a list of Event
+    :return: Return a list of Event, on failure empty list.
     """
     url = 'https://mathematics.huji.ac.il/' \
           'calendar/upcoming/eventss/events-seminars'
     raw_html = util.simple_get(url)
     if raw_html is None:
-        print('Could not get url')
-        return None
+        print('Could not get the url: {}'.format(url))
+        return []
     i = 2
     html = BeautifulSoup(raw_html, 'html.parser')
     events = []
@@ -117,7 +117,7 @@ def parse_datetime(str_date):
     :param str_date: url's time format
     :return: datetime object
     """
-    return datetime.strptime(str_date, '%Y %B %d %I:%M%p')
+    return datetime.strptime(str_date, '%Y %b %d %I:%M%p')
 
 
 def try_to_get_css(container, field):
