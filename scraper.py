@@ -56,7 +56,6 @@ def init_calendar():
         import sys; sys.exit()
 
 
-
 def run(args, events, debug=False):
     """
     Adds the events into the selected calendar.
@@ -90,10 +89,11 @@ if __name__ == "__main__":
         parser.error('--all and --scraper is ambiguous. Use only one of them.')
     if args.all:
         args.scraper = SCRAPERS_NAMES
-    events = []
+    events = set()
     for scraper in SCRAPERS:
         if scraper.__name__ in args.scraper:
-            events += scraper.get_events()
+            new_events = set(scraper.get_events())
+            events.union(new_events)
     if not args.debug:
         added, num = run(args, events)
     else:

@@ -13,6 +13,36 @@ EXAMPLE_EVENTS = [{
 }]
 
 
+places = {
+    'A': ['Academon', 'Alberman', 'Amphitheater', 'Aronberg'],
+    'B': ['Bergman', 'Brandman', 'Brickman'],
+    'C': ['Canada', 'Casali', 'Cosell'],
+    'D': ['Dancinger', 'Daroff', 'Dormitories', 'Dvorsky'],
+    'E': [],
+    'F': ['Feldman'],
+    'G': ['Geology'],
+    'H': ['Hakiria', 'Harman'],
+    'I': [],
+    'J': [],
+    'K': ['Kaplun'],
+    'L': ['Levin', 'Levy', 'Libermann', 'Los Angeles', 'Lubin'],
+    'M': ['Maison de France', 'Manchester', 'Marks', 'Mathematics'],
+    'N': [],
+    'O': ['ORT'],
+    'P': ['Philadelphia', 'Planetarium'],
+    'Q': [],
+    'R': ['Ross', 'Rothberg', 'Rubin'],
+    'S': ['Sherman', 'Silverman', 'Sprinzak', 'Silberman'],
+    'T': ['Taylor'],
+    'U': [],
+    'V': [],
+    'W': ['Weissman', 'Wolffsohn'],
+    'X': [],
+    'Y': [],
+    'Z': []
+}
+
+
 def simple_get(url):
     """
     Attempts to get the content at `url` by making an HTTP GET request.

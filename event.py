@@ -1,5 +1,6 @@
 from util import to_google_format
 from datetime import timedelta
+import util
 
 
 class Event:
@@ -43,8 +44,30 @@ class Event:
                 self.location,
                 self.link)
 
+    def location_label(self):
+        for word in self.location.replace(',', '').split(' '):
+            try:
+                value = util.places[word[0].upper()]
+            except KeyError:
+                continue
+            for place in value:
+                if word in place:
+                    return place
+        return None
+
     def __lt__(self, other):
         """
         Standard order by start date
         """
         return self.start_date < other.start_date
+
+    def __eq__(self, other):
+        if isinstance(other, Event):
+            return self.start_date == other.start_date and \
+                    self.location_label() == other.location_label
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self.__repr__())
