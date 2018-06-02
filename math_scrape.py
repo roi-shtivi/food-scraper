@@ -54,7 +54,8 @@ def get_event_from_container(container):
     if not title or 'TBA' in title or t is None:
         return None
     try:
-        location = container.find('section', {'class': 'field-name-field-event-location'}).text
+        raw_location = container.find('section', {'class': 'field-name-field-event-location'}).text
+        location = raw_location.replace(u'\xa0', ' ')
     # no location has found
     except AttributeError:
         return None

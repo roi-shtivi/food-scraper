@@ -15,10 +15,10 @@ EXAMPLE_EVENTS = [{
 # keep it sorted by len can be done by sort_dict()
 places = {
     'A': ['Academon', 'Alberman', 'Aronberg', 'Amphitheater'],
-    'B': ['Bergman', 'Brandman', 'Brickman'],
+    'B': ['Berman', 'Bergman', 'Brandman', 'Brickman'],
     'C': ['Canada', 'Casali', 'Cosell'],
     'D': ['Daroff', 'Dvorsky', 'Dancinger', 'Dancinger A', 'Dancinger B', 'Dormitories'],
-    'E': [],
+    'E': ['Earth'],
     'F': ['Feldman'],
     'G': ['Geology'],
     'H': ['Harman', 'Hakiria'],

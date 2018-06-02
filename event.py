@@ -51,7 +51,7 @@ class Event:
             word, word2 = location_tokens[i:i+2]
             try:
                 value = util.places[word[0].upper()]
-            except KeyError:
+            except (KeyError, IndexError):
                 continue
             for place in value:
                 if (word + " " + word2) in place:
@@ -60,7 +60,7 @@ class Event:
         for word in location_tokens:
             try:
                 value = util.places[word[0].upper()]
-            except KeyError:
+            except (KeyError, IndexError):
                 continue
             for place in value:
                 if word in place:
@@ -76,10 +76,17 @@ class Event:
     def __eq__(self, other):
         if isinstance(other, Event):
             return self.start_date == other.start_date and \
-                    self.location_label() == other.location_label
+                    self.location_label() == other.location_label()
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.__repr__())
+        return hash((self.start_date, self.location_label()))
+
+
+if __name__ == '__main__':
+    a = Event("", "", 1, " ", "", "Seminar Hall, Dancinger A (Chemistry) Building ", None)
+    b = Event("", "", 1, " ", "", "Seminar Hall, Dancinger A (Chemistry) Building ", None)
+    j = {a, b}
+    print(j)

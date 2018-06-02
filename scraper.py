@@ -1,10 +1,10 @@
 from calender import Calendar
-import science_scrape
+import science_scrape, math_scrape
 import db
 import os
 import argparse
 
-SCRAPERS = [science_scrape]
+SCRAPERS = [science_scrape, math_scrape]
 SCRAPERS_NAMES = [x.__name__ for x in SCRAPERS]
 
 def parse_arguments():
@@ -93,7 +93,7 @@ if __name__ == "__main__":
     for scraper in SCRAPERS:
         if scraper.__name__ in args.scraper:
             new_events = set(scraper.get_events())
-            events.union(new_events)
+            events = events.union(new_events)
     if not args.debug:
         added, num = run(args, events)
     else:
