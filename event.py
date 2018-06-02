@@ -45,7 +45,19 @@ class Event:
                 self.link)
 
     def location_label(self):
-        for word in self.location.replace(',', '').split(' '):
+        location_tokens = self.location.replace(',', '').split(' ')
+        # 2 words match
+        for i in range(len(location_tokens) - 1):
+            word, word2 = location_tokens[i:i+2]
+            try:
+                value = util.places[word[0].upper()]
+            except KeyError:
+                continue
+            for place in value:
+                if (word + " " + word2) in place:
+                    return place
+        # 1 word match
+        for word in location_tokens:
             try:
                 value = util.places[word[0].upper()]
             except KeyError:

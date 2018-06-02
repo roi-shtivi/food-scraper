@@ -12,27 +12,27 @@ EXAMPLE_EVENTS = [{
             'timeZone': 'Asia/Jerusalem'},
 }]
 
-
+# keep it sorted by len can be done by sort_dict()
 places = {
-    'A': ['Academon', 'Alberman', 'Amphitheater', 'Aronberg'],
+    'A': ['Academon', 'Alberman', 'Aronberg', 'Amphitheater'],
     'B': ['Bergman', 'Brandman', 'Brickman'],
     'C': ['Canada', 'Casali', 'Cosell'],
-    'D': ['Dancinger', 'Daroff', 'Dormitories', 'Dvorsky'],
+    'D': ['Daroff', 'Dvorsky', 'Dancinger', 'Dancinger A', 'Dancinger B', 'Dormitories'],
     'E': [],
     'F': ['Feldman'],
     'G': ['Geology'],
-    'H': ['Hakiria', 'Harman'],
+    'H': ['Harman', 'Hakiria'],
     'I': [],
     'J': [],
     'K': ['Kaplun'],
-    'L': ['Levin', 'Levy', 'Libermann', 'Los Angeles', 'Lubin'],
-    'M': ['Maison de France', 'Manchester', 'Marks', 'Mathematics'],
+    'L': ['Levy', 'Levin', 'Lubin', 'Libermann', 'Los Angeles'],
+    'M': ['Marks', 'Manchester', 'Mathematics', 'Maison de France'],
     'N': [],
     'O': ['ORT'],
-    'P': ['Philadelphia', 'Planetarium'],
+    'P': ['Planetarium', 'Philadelphia'],
     'Q': [],
-    'R': ['Ross', 'Rothberg', 'Rubin'],
-    'S': ['Sherman', 'Silverman', 'Sprinzak', 'Silberman'],
+    'R': ['Ross', 'Rubin', 'Rothberg'],
+    'S': ['Sherman', 'Sprinzak', 'Silberman', 'Silverman'],
     'T': ['Taylor'],
     'U': [],
     'V': [],
@@ -41,6 +41,11 @@ places = {
     'Y': [],
     'Z': []
 }
+
+
+def sort_dict():
+    for key in places.keys():
+        places[key].sort(key=lambda item: len(item))
 
 
 def simple_get(url):
