@@ -59,6 +59,24 @@ class Calendar:
             self.print_status(event, 'deleted')
         return deleted
 
+    def get_events(self, calendar_id):
+        """
+        Gets list of event from calendar_id and make from them Events objects list
+        :param calendar_id: google calendar id
+        :return: Events list
+        """
+        events_list = []
+        page_token = None
+        while True:
+            events = service.events().list(calendarId=calendar_id, pageToken=page_token).execute()
+            for e in events['items']:
+                events_list.append(e)
+            page_token = events.get('nextPageToken')
+            if not page_token:
+                break
+
+        return events_list
+
 
 def setup():
     """

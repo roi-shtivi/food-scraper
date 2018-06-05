@@ -19,54 +19,50 @@ def parse_event(event):
     :param event: google calendar event
     :return: new Event
     """
-    event_inst = title = s_time = e_time = body = location = link = ""
+    i = event_inst = title = s_time = e_time = body = location = link = ""
+    try:
+        i = s_time = event['start']['dateTime'].split('+')[0]
+        i = location = event['location']
+        i = title = event['summary']
+    except ValueError:
+        print("Error getting {} from event".format(i))
+
     if 'organizer' in event and 'displayName' in event['organizer']:
         event_inst = event['organizer']['displayName']
-    if 'summary' in event:
-        title = event['summary']
-    if 'start' in event and 'dateTime' in event['start']:
-        s_time = event['start']['dateTime'].split('+')[0]
     if 'end' in event and 'dateTime' in event['end']:
         e_time = event['end']['dateTime'].split('+')[0]
     if 'description' in event:
         body = event['description']
-    if 'location' in event:
-        location = event['location']
     if 'htmlLink' in event:
         link = event['htmlLink']
     if location != "" and s_time != "" and title != "":
         return Event(event_inst, title, s_time, e_time, body, location, link)
 
 
-def add_events(calendar_id):
+def to_events_objects(google_events):
     """
     Gets list of event from calendar_id and make from them Events objects list
-    :param calendar_id: google calendar id
+    :param google_events: google events
     :return: Events list
     """
     events_list = []
-    page_token = None
-    while True:
-        events = service.events().list(calendarId=calendar_id, pageToken=page_token).execute()
-        for e in events['items']:
-            event = parse_event(e)
-            if event is not None:
-                events_list.append(event)
+    for e in google_events:
+        event = parse_event(e)
+        if event is not None:
+            events_list.append(event)
 
-        page_token = events.get('nextPageToken')
-        if not page_token:
-            break
     return events_list
 
 
-def get_events():
+def get_events(service):
     """
     Get's all events from every calendar_id and make one Event list
     :return: Events list
     """
     events = []
     for cal_id in calendars_ids:
-        events += add_events(cal_id)
+        google_events = service.get_events(cal_id)
+        events += to_events_objects(google_events)
     return events
 
 
