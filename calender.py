@@ -1,6 +1,7 @@
 from apiclient import discovery
 from httplib2 import Http
 from oauth2client import file, client, tools
+from event import Event
 import os
 
 SCOPES = 'https://www.googleapis.com/auth/calendar'  # read&write permissions
@@ -58,6 +59,72 @@ class Calendar:
                 ).execute())
             self.print_status(event, 'deleted')
         return deleted
+
+    def get_events(self):
+        """
+        Gets all the event from calendar
+        :return: google calendar events list
+        """
+        events_list = []
+        page_token = None
+        while True:
+            events = self.g_cal.events().list(calendarId=self.cal_id, pageToken=page_token).execute()
+            for e in events['items']:
+                events_list.append(e)
+            page_token = events.get('nextPageToken')
+            if not page_token:
+                break
+
+        return events_list
+
+    def to_events_objects(self):
+        """
+        Convert all the event in the calendar to Event objects list
+        :return: Events list
+        """
+        google_events = self.get_events()
+        events_list = []
+        for i in range(len(google_events)):
+            event = self.parse_event(google_events[i])
+            if event is not None:
+                events_list.append(event)
+
+        return events_list
+
+    def parse_event(self, event):
+        """
+        Parse from the response body of event details for new Event object
+        :param event: google calendar event
+        :param i: number of event in the google calendar
+        :return: new Event
+        """
+        try:
+            s_time = event['start']['dateTime'].split('+')[0]
+            location = event['location']
+            title = event['summary']
+        except:
+            print("Error: Missing start time/location/title. calendar id: {} , event id: {}".
+                  format(self.cal_id, event['id']))
+            return None
+
+        try:
+            event_inst = event['organizer']['displayName']
+        except KeyError:
+            event_inst = ""
+        try:
+            e_time = event['end']['dateTime'].split('+')[0]
+        except KeyError:
+            e_time = ""
+        try:
+            body = event['description']
+        except KeyError:
+            body = ""
+        try:
+            link = event['htmlLink']
+        except KeyError:
+            link = ""
+        if location != "" and s_time != "" and title != "":
+            return Event(event_inst, title, s_time, e_time, body, location, link)
 
 
 def setup():
