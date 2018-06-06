@@ -2,6 +2,7 @@ from apiclient import discovery
 from httplib2 import Http
 from oauth2client import file, client, tools
 from event import Event
+from time import gmtime, strftime
 import os
 
 SCOPES = 'https://www.googleapis.com/auth/calendar'  # read&write permissions
@@ -67,8 +68,9 @@ class Calendar:
         """
         events_list = []
         page_token = None
+        cur_time = strftime("%Y-%m-%dT%H:%M:%SZ", gmtime())  # get only events from current time and on
         while True:
-            events = self.g_cal.events().list(calendarId=self.cal_id, pageToken=page_token).execute()
+            events = self.g_cal.events().list(calendarId=self.cal_id, pageToken=page_token, timeMin=cur_time).execute()
             for e in events['items']:
                 events_list.append(e)
             page_token = events.get('nextPageToken')
