@@ -77,54 +77,57 @@ class Calendar:
 
         return events_list
 
-    def to_events_objects(self):
-        """
-        Convert all the event in the calendar to Event objects list
-        :return: Events list
-        """
-        google_events = self.get_events()
-        events_list = []
-        for i in range(len(google_events)):
-            event = self.parse_event(google_events[i])
-            if event is not None:
-                events_list.append(event)
 
-        return events_list
+# static function
+def to_events_objects(cal_id, google_events):
+    """
+    Convert all the event in the calendar to Event objects list
+    :param google_events: google calendar events
+    :return: Events list
+    """
+    events_list = []
+    for i in range(len(google_events)):
+        event = parse_event(cal_id, google_events[i])
+        if event is not None:
+            events_list.append(event)
 
-    def parse_event(self, event):
-        """
-        Parse from the response body of event details for new Event object
-        :param event: google calendar event
-        :param i: number of event in the google calendar
-        :return: new Event
-        """
-        try:
-            s_time = event['start']['dateTime'].split('+')[0]
-            location = event['location']
-            title = event['summary']
-        except:
-            print("Error: Missing start time/location/title. calendar id: {} , event id: {}".
-                  format(self.cal_id, event['id']))
-            return None
+    return events_list
 
-        try:
-            event_inst = event['organizer']['displayName']
-        except KeyError:
-            event_inst = ""
-        try:
-            e_time = event['end']['dateTime'].split('+')[0]
-        except KeyError:
-            e_time = ""
-        try:
-            body = event['description']
-        except KeyError:
-            body = ""
-        try:
-            link = event['htmlLink']
-        except KeyError:
-            link = ""
-        if location != "" and s_time != "" and title != "":
-            return Event(event_inst, title, s_time, e_time, body, location, link)
+
+def parse_event(cal_id, event):
+    """
+    Parse from the response body of event details for new Event object
+    :param cal_id: google calendar id of current event
+    :param event: google calendar event
+    :return: new Event
+    """
+    try:
+        s_time = event['start']['dateTime'].split('+')[0]
+        location = event['location']
+        title = event['summary']
+    except:
+        print("Error: Missing start time/location/title. calendar id: {} , event id: {}".
+              format(cal_id, event['id']))
+        return None
+
+    try:
+        event_inst = event['organizer']['displayName']
+    except KeyError:
+        event_inst = ""
+    try:
+        e_time = event['end']['dateTime'].split('+')[0]
+    except KeyError:
+        e_time = ""
+    try:
+        body = event['description']
+    except KeyError:
+        body = ""
+    try:
+        link = event['htmlLink']
+    except KeyError:
+        link = ""
+    if location != "" and s_time != "" and title != "":
+        return Event(event_inst, title, s_time, e_time, body, location, link)
 
 
 def setup():

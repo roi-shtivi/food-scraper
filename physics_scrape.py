@@ -1,4 +1,4 @@
-from calender import Calendar
+from calender import Calendar, to_events_objects
 
 # Calendars id's
 CALENDAR_ID_BIOPHYSICS = 'mail.huji.ac.il_6al194vs9273npoq6qt0kqoh7o@group.calendar.google.com'
@@ -15,5 +15,5 @@ if __name__ == '__main__':
     events = []
     for cal_id in calendars_ids:
         calendar = Calendar(cal_id)
-        events += calendar.to_events_objects()
-
+        google_event = calendar.get_events()
+        events += to_events_objects(calendar.cal_id, google_event)
