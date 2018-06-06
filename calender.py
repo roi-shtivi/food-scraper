@@ -84,6 +84,7 @@ class Calendar:
 def to_events_objects(cal_id, google_events):
     """
     Convert all the event in the calendar to Event objects list
+    :param cal_id: google calendar id of current event
     :param google_events: google calendar events
     :return: Events list
     """
