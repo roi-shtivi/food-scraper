@@ -16,3 +16,4 @@ if __name__ == '__main__':
     for cal_id in calendars_ids:
         calendar = Calendar(cal_id)
         events += calendar.to_events_objects()
+
